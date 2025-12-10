@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tertulia Librería</title>
+<style>
+  body{margin:0;font-family:Arial;background:#f2f6ff;padding-bottom:120px;}
+  #barra{position:sticky;top:0;background:#0d47a1;padding:12px;z-index:999;color:#fff;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  #titulo{font-weight:600;font-size:20px;color:#fff;margin:0;}
+  #categoria,#buscador{box-sizing:border-box;width:100%;max-width:520px;padding:10px;border-radius:8px;border:none;font-size:15px;display:block;}
+  #categoria{background:#fff;}
+  #buscador{background:#fff;}
+  .catalogo{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:12px;min-height:300px;}
+  .producto{background:white;border-radius:12px;padding:10px;position:relative;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.06);transition:all 0.3s ease;transform-origin:center;}
+  .producto.fav-added{transform:scale(1.05);box-shadow:0 8px 20px rgba(255,215,0,0.4);}
+  .producto.fav-removed{transform:scale(0.95);opacity:0.7;}
+  .producto img{width:100%;height:auto;max-height:220px;object-fit:contain;border-radius:8px;margin-bottom:8px;}
+  .titulo{font-weight:700;margin:0 0 6px 0;}
+  .autor{margin:0 0 8px 0;color:#333;}
+  .precio{color:#0d47a1;font-weight:700;}
+  .estrella{position:absolute;top:8px;right:8px;font-size:20px;cursor:pointer;color:#bbb;transition:all 0.3s ease;}
+  .estrella:hover{transform:scale(1.3);}
+  .estrella.act{color:gold;text-shadow:0 0 8px rgba(255,215,0,0.7);}
+  #preguntarFavs{position:fixed;bottom:90px;left:15px;background:#0d47a1;color:white;padding:10px;border-radius:8px;font-size:14px;display:none;z-index:999;cursor:pointer;transition:all 0.3s ease;}
+  #preguntarFavs:hover{background:#1e5dc4;transform:translateY(-2px);}
+  #favoritosBtn{position:fixed;bottom:90px;right:15px;background:#0d47a1;color:white;padding:12px;border-radius:50%;font-size:18px;z-index:999;cursor:pointer;transition:all 0.3s ease;border:none;}
+  #favoritosBtn:hover{background:#1e5dc4;transform:translateY(-2px);}
+  #favoritosBtn.act{background:gold;color:#0d47a1;}
+  #volverBtn{position:fixed;bottom:90px;right:60px;background:#0d47a1;color:white;padding:10px 12px;border-radius:50%;font-size:18px;z-index:999;cursor:pointer;transition:all 0.3s ease;border:none;display:none;}
+  #volverBtn:hover{background:#1e5dc4;transform:translateY(-2px);}
+  #whatsapp{position:fixed;bottom:20px;right:15px;background:#25D366;color:white;padding:14px;border-radius:50%;font-size:22px;text-decoration:none;z-index:999;}
+  .paginacion{display:flex;justify-content:center;align-items:center;gap:8px;margin:20px 0;padding:10px;flex-wrap:wrap;}
+  .paginacion button{padding:8px 14px;border:1px solid #ccc;background:#fff;border-radius:4px;cursor:pointer;font-size:14px;min-width:36px;transition:all 0.2s ease;}
+  .paginacion button:hover{background:#0d47a1;color:white;border-color:#0d47a1;}
+  .paginacion button.active{background:#0d47a1;color:white;border-color:#0d47a1;font-weight:bold;}
+  .paginacion button:disabled{opacity:0.5;cursor:not-allowed;}
+  .contador-pagina{color:#666;font-size:14px;margin:0 10px;}
+  @media(min-width:700px){
+    #barra{flex-direction:row;justify-content:space-between;align-items:center;padding:14px 20px;}
+    #titulo{width:25%;text-align:left;}
+    #categoria,#buscador{width:35%;margin:0;}
+  }
+</style>
+</head>
+<body>
+  <div id="barra">
+    <div id="titulo">Tertulia librería</div>
+    <select id="categoria"><option value="">📂 Todas las categorías</option><option value="18">18</option><option value="Autoayuda">Autoayuda</option><option value="Fantasía">Fantasía</option><option value="Juvenil">Juvenil</option><option value="LGBT+">LGBT+</option><option value="Misterio">Misterio</option><option value="No ficción">No ficción</option><option value="Romance">Romance</option><option value="psicologicos">psicologicos</option></select>
+    <input id="buscador" placeholder="🔍 Buscar por título o autor..." aria-label="Buscar por título o autor">
+  </div>
+
+  <div class="catalogo" id="catalogo">
+
+    <div class="producto" data-titulo="hacer el mal" data-autor="dra. julia shaw" data-categoria="psicologicos">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Hacer%20el%20mal%2C%20precio%20%24169%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Hacer el mal">
+        <div class="titulo">Hacer el mal</div>
+        <div class="autor">Dra. Julia shaw</div>
+        <div class="precio">$169 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="herido" data-autor="tabitha suzuma" data-categoria="psicologicos">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Herido%2C%20precio%20%24200%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Herido">
+        <div class="titulo">Herido</div>
+        <div class="autor">Tabitha Suzuma</div>
+        <div class="precio">$200 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la hora azul" data-autor="paula hawkins" data-categoria="psicologicos">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20hora%20azul%2C%20precio%20%24230%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La hora azul">
+        <div class="titulo">La hora azul</div>
+        <div class="autor">Paula Hawkins</div>
+        <div class="precio">$230 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la paciente silenciosa" data-autor="alex michaelides" data-categoria="psicologicos">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20paciente%20silenciosa%2C%20precio%20%24225%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La paciente silenciosa">
+        <div class="titulo">La paciente silenciosa</div>
+        <div class="autor">Alex Michaelides</div>
+        <div class="precio">$225 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="psico, la historia de la mente humana" data-autor="paul bloom" data-categoria="psicologicos">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Psico%2C%20la%20historia%20de%20la%20mente%20humana%2C%20precio%20%24215%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Psico, la historia de la mente humana">
+        <div class="titulo">Psico, la historia de la mente humana</div>
+        <div class="autor">Paul Bloom</div>
+        <div class="precio">$215 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="boos" data-autor="eva mużoz" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Boos%2C%20precio%20%24360%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Boos">
+        <div class="titulo">Boos</div>
+        <div class="autor">Eva Mużoz</div>
+        <div class="precio">$360 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="censurado" data-autor="darlis stefany" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Censurado%2C%20precio%20%24230%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Censurado">
+        <div class="titulo">Censurado</div>
+        <div class="autor">Darlis Stefany</div>
+        <div class="precio">$230 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el color rojo" data-autor="m.moon" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20color%20rojo%2C%20precio%20%24290%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="El color rojo">
+        <div class="titulo">El color rojo</div>
+        <div class="autor">M.moon</div>
+        <div class="precio">$290 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="lascivia 1" data-autor="eva mużoz" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Lascivia%201%2C%20precio%20%24215%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Lascivia 1">
+        <div class="titulo">Lascivia 1</div>
+        <div class="autor">Eva Mużoz</div>
+        <div class="precio">$215 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="lujuria 1" data-autor="eva mużoz" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Lujuria%201%2C%20precio%20%24265%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Lujuria 1">
+        <div class="titulo">Lujuria 1</div>
+        <div class="autor">Eva Mużoz</div>
+        <div class="precio">$265 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="padre" data-autor="sierra simone" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Padre%2C%20precio%20%24225%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/padre.jpg" alt="Padre">
+        <div class="titulo">Padre</div>
+        <div class="autor">sierra simone</div>
+        <div class="precio">$225 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="pecador" data-autor="sierra simone" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Pecador%2C%20precio%20%24225%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/pecador.jpg" alt="Pecador">
+        <div class="titulo">Pecador</div>
+        <div class="autor">sierra simone</div>
+        <div class="precio">$225 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="santo" data-autor="sierra simone" data-categoria="18">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Santo%2C%20precio%20%24235%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/santo.jpg" alt="Santo">
+        <div class="titulo">Santo</div>
+        <div class="autor">sierra simone</div>
+        <div class="precio">$235 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la empleada " data-autor="freida mcfadden" data-categoria="Misterio">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20empleada%20%2C%20precio%20%24200%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La empleada ">
+        <div class="titulo">La empleada </div>
+        <div class="autor">Freida McFadden</div>
+        <div class="precio">$200 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="los compas y el diamantito legendario " data-autor="" data-categoria="Juvenil">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20los%20compas%20y%20el%20diamantito%20legendario%20%2C%20precio%20%24190%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="los compas y el diamantito legendario ">
+        <div class="titulo">los compas y el diamantito legendario </div>
+        <div class="autor"></div>
+        <div class="precio">$190 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="al final muere el primero" data-autor="adam silvera" data-categoria="LGBT+">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20al%20final%20muere%20el%20primero%2C%20precio%20%24220%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="al final muere el primero">
+        <div class="titulo">al final muere el primero</div>
+        <div class="autor">adam silvera</div>
+        <div class="precio">$220 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el llano en llamas" data-autor="juan rulfo" data-categoria="No ficción">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20el%20llano%20en%20llamas%2C%20precio%20%24170%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/el%20llano%20en%20llamas.jpg" alt="el llano en llamas">
+        <div class="titulo">el llano en llamas</div>
+        <div class="autor">juan rulfo</div>
+        <div class="precio">$170 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="pedro paramo" data-autor="juab rulfo" data-categoria="No ficción">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20pedro%20paramo%2C%20precio%20%24190%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="pedro paramo">
+        <div class="titulo">pedro paramo</div>
+        <div class="autor">juab rulfo</div>
+        <div class="precio">$190 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="audaz productivo y feliz" data-autor="robin sharma" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Audaz%20productivo%20y%20feliz%2C%20precio%20%24180%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Audaz productivo y feliz">
+        <div class="titulo">Audaz productivo y feliz</div>
+        <div class="autor">Robin Sharma</div>
+        <div class="precio">$180 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="como suprimir las preocupaciones y disfrutar de la vida" data-autor="dale carnegie" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Como%20suprimir%20las%20preocupaciones%20y%20disfrutar%20de%20la%20vida%2C%20precio%20%24199%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Como suprimir las preocupaciones y disfrutar de la vida">
+        <div class="titulo">Como suprimir las preocupaciones y disfrutar de la vida</div>
+        <div class="autor">dale carnegie</div>
+        <div class="precio">$199 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el camino del hombre superior" data-autor="david deida" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20camino%20del%20hombre%20superior%2C%20precio%20%24195%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="El camino del hombre superior">
+        <div class="titulo">El camino del hombre superior</div>
+        <div class="autor">David Deida</div>
+        <div class="precio">$195 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el obstaculo es el camino" data-autor="ryan holiday" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20obstaculo%20es%20el%20camino%2C%20precio%20%24200%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="El obstaculo es el camino">
+        <div class="titulo">El obstaculo es el camino</div>
+        <div class="autor">Ryan Holiday</div>
+        <div class="precio">$200 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el quitni acuerdo" data-autor="miguel ruiz" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20quitni%20acuerdo%2C%20precio%20%24170%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/el%20quinto%20acuerdo.jfif" alt="El quitni acuerdo">
+        <div class="titulo">El quitni acuerdo</div>
+        <div class="autor">Miguel Ruiz</div>
+        <div class="precio">$170 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el sutil arte de que te importe un carajo" data-autor="mark manson" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20sutil%20arte%20de%20que%20te%20importe%20un%20carajo%2C%20precio%20%24195%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="El sutil arte de que te importe un carajo">
+        <div class="titulo">El sutil arte de que te importe un carajo</div>
+        <div class="autor">mark manson</div>
+        <div class="precio">$195 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="focus" data-autor="daneil goleman" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Focus%2C%20precio%20%24230%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Focus">
+        <div class="titulo">Focus</div>
+        <div class="autor">Daneil Goleman</div>
+        <div class="precio">$230 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la llamada del coraje" data-autor="ryan holiday" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20llamada%20del%20coraje%2C%20precio%20%24200%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La llamada del coraje">
+        <div class="titulo">La llamada del coraje</div>
+        <div class="autor">Ryan Holiday</div>
+        <div class="precio">$200 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="liberate de la codependencia" data-autor="melody beattie" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Liberate%20de%20la%20codependencia%2C%20precio%20%24215%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Liberate de la codependencia">
+        <div class="titulo">Liberate de la codependencia</div>
+        <div class="autor">melody beattie</div>
+        <div class="precio">$215 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="los 5 lenguages del amor " data-autor="gary chapman" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Los%205%20lenguages%20del%20amor%20%2C%20precio%20%2415%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Los 5 lenguages del amor ">
+        <div class="titulo">Los 5 lenguages del amor </div>
+        <div class="autor">gary chapman</div>
+        <div class="precio">$15 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="los cuatro acuerdos " data-autor="miguel ruiz" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Los%20cuatro%20acuerdos%20%2C%20precio%20%24125%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/images.jfif" alt="Los cuatro acuerdos ">
+        <div class="titulo">Los cuatro acuerdos </div>
+        <div class="autor">Miguel ruiz</div>
+        <div class="precio">$125 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="ser justo en un mundo injusto" data-autor="ryan holiday" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Ser%20justo%20en%20un%20mundo%20injusto%2C%20precio%20%24210%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Ser justo en un mundo injusto">
+        <div class="titulo">Ser justo en un mundo injusto</div>
+        <div class="autor">Ryan Holiday</div>
+        <div class="precio">$210 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="una carta para ti que nunca leeras" data-autor="anna marie klee" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Una%20carta%20para%20ti%20que%20nunca%20leeras%2C%20precio%20%24179%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Una carta para ti que nunca leeras">
+        <div class="titulo">Una carta para ti que nunca leeras</div>
+        <div class="autor">Anna Marie Klee</div>
+        <div class="precio">$179 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="yo puedo tu puedes" data-autor="margarita pasos" data-categoria="Autoayuda">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20yo%20puedo%20tu%20puedes%2C%20precio%20%24205%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="yo puedo tu puedes">
+        <div class="titulo">yo puedo tu puedes</div>
+        <div class="autor">margarita pasos</div>
+        <div class="precio">$205 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="a dos metros de ti" data-autor="rachael lippincott" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20a%20dos%20metros%20de%20ti%2C%20precio%20%24170%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfQBwiQq81mXezN-ELObwU0d-wDjmxVmmQTt2E42Ch7uy1hSHyI9IjxabRuOMNEY5rjYzupkyGSQSsFwzCdliPrGOOEXNT9lxI0y83TfeQjzm-M1EIeZCL5xYcd3TAKQaBz1ype_LUcoVvI7ZTFLFU1WjAwgDFeGuOggdiXhhdFyfcJiLR7IQuarWsOuv-VjXDVAZCuHocMh2keMbkktHDkw3WBWgj6K4Vm=w1280" alt="a dos metros de ti">
+        <div class="titulo">a dos metros de ti</div>
+        <div class="autor">Rachael Lippincott</div>
+        <div class="precio">$170 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="a un paso de ti" data-autor="hannah bonam young" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20A%20un%20paso%20de%20ti%2C%20precio%20%24249%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="A un paso de ti">
+        <div class="titulo">A un paso de ti</div>
+        <div class="autor">Hannah Bonam Young</div>
+        <div class="precio">$249 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="after" data-autor="anna todd" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20After%2C%20precio%20%24250%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfDpHEUrLp5RkPB5R7qJ1_0PQXI3OvUzGR85sw-3kjeLSgrwPAKgYTP_7C5JG_PvIag3J-kRFwTrl6AJUjPZdwczXtV2TybCKk3xJKjEli2HExMz-zy7k8VABNfxos5_uLqit7E2uQxuxFAdOY-avq1O_Ux6bCLBQ_SieYj-tdGABrYVwQ8AfCU5fyYU8jN3EiGJQmxrtQyU4vEl67DfqrYUfGKyNVRCeyOZfU=w1280" alt="After">
+        <div class="titulo">After</div>
+        <div class="autor">anna todd</div>
+        <div class="precio">$250 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="al final mueren los dos" data-autor="adam silvera" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20al%20final%20mueren%20los%20dos%2C%20precio%20%24210%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfTku74Y-Gi3IrZ3itp81dOPnYRekovzPcemqZjAPRP7d7gWyzm_qQ-c-kbxLilNKs-F6g-DChE1TMdBFN6vbSoywOnKRV6urHDqbp_Za5ie2aP9t1oKW6-02MEjmegLygFUK0-V2Kc3lRLuyZTk_DOv4JZ-f93hDOlgvLWknHr5lzQjc1-SeoqS7oDz2WOGnmJmDaOP79oLVxmylgzqWOVWhC2j1kxdMRuRLI=w1280" alt="al final mueren los dos">
+        <div class="titulo">al final mueren los dos</div>
+        <div class="autor">adam silvera</div>
+        <div class="precio">$210 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el arte de engażar al karma" data-autor="elisabet benavent" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20arte%20de%20enga%C5%BCar%20al%20karma%2C%20precio%20%24255%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="El arte de engażar al karma">
+        <div class="titulo">El arte de engażar al karma</div>
+        <div class="autor">Elisabet Benavent</div>
+        <div class="precio">$255 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="hasta que nos quedemos sin estrellas" data-autor="inma rubiales" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20hasta%20que%20nos%20quedemos%20sin%20estrellas%2C%20precio%20%24245%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkcq_XhZucqrk7lg7_XlpzfsMF9JPOf5nNJtjQyCDErgBcsIQluy4XICtfs0s1b2gR8nn-UDG3CqyEpDfcLWCNy7PWeZRCCDmba52ADUidjKGZ2SvoNog36MuOansx9hlDuOvvieICjimafajjODxEe6y53n45xnGpxJqqN0JU5hr155hCrFV_JAcCsug1PhM7eD0K33Kc7R616ynjPbRiInLg5Oy7vvZEKFBcI=w1280" alt="hasta que nos quedemos sin estrellas">
+        <div class="titulo">hasta que nos quedemos sin estrellas</div>
+        <div class="autor">inma rubiales</div>
+        <div class="precio">$245 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="irresitible error 1" data-autor="melisa ibarra" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Irresitible%20error%201%2C%20precio%20%24269%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Irresitible error 1">
+        <div class="titulo">Irresitible error 1</div>
+        <div class="autor">Melisa Ibarra</div>
+        <div class="precio">$269 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la ultima carta" data-autor="jose l. rivera" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20ultima%20carta%2C%20precio%20%24170%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La ultima carta">
+        <div class="titulo">La ultima carta</div>
+        <div class="autor">Jose L. Rivera</div>
+        <div class="precio">$170 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="las ventajas de ser invisible" data-autor="stephen chbosky" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Las%20ventajas%20de%20ser%20invisible%2C%20precio%20%24180%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfZ9QMel-oskUgiA1U-S04r_SWgYGahKR829p91EiGodmf93Jh9q4cB1f-9GSZ7fe87ZuMaLlExisCd7Sfn3Xcze_C8gGM626s5pANTA7sbbFBl_X3LUt8iIKqjw3uIRUwmxSaQZ9rwKSTMf6_B-qHVeV2_JGBjfQe1xVjubXC9M3vxrsX2gZXa-llSP2iHmGRDz69lNSSzn7c3OTwJeZU684mY1sDg96rvEnc=w1280" alt="Las ventajas de ser invisible">
+        <div class="titulo">Las ventajas de ser invisible</div>
+        <div class="autor">stephen chbosky</div>
+        <div class="precio">$180 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="mientras te olvido" data-autor="nacario portal arraez" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Mientras%20te%20olvido%2C%20precio%20%24210%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Mientras te olvido">
+        <div class="titulo">Mientras te olvido</div>
+        <div class="autor">Nacario Portal Arraez</div>
+        <div class="precio">$210 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="mil besos tuyos" data-autor="tillie cole" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Mil%20besos%20tuyos%2C%20precio%20%24220%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Mil besos tuyos">
+        <div class="titulo">Mil besos tuyos</div>
+        <div class="autor">Tillie Cole</div>
+        <div class="precio">$220 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="nuestro lugar en el mundo" data-autor="inma rubiales" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Nuestro%20lugar%20en%20el%20mundo%2C%20precio%20%24259%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkeKgg8Q9E5E_p-QrkeR5HBGV48108bSRGe5WI_kzFA7gz_HQaVVYOyuVfF68dNeJoeFSgTKg8iuLvPZICorw8yagR5uUuLIKJyabYjOfdNdDRYC6QhzOzoGDl6l-G909-hJdJNa8qh1YbBj59tVTSphCaiHMC1YeK_Dc-S0B0RY9AQIJPHYen6nv6hvRftJFIATl2GitPp_zQ3nPPeRImf4wvBU5NEfBXwq=w1280" alt="Nuestro lugar en el mundo">
+        <div class="titulo">Nuestro lugar en el mundo</div>
+        <div class="autor">inma rubiales</div>
+        <div class="precio">$259 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="tan cerca de ti" data-autor="antonio hidalgo" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Tan%20cerca%20de%20ti%2C%20precio%20%24245%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Tan cerca de ti">
+        <div class="titulo">Tan cerca de ti</div>
+        <div class="autor">Antonio Hidalgo</div>
+        <div class="precio">$245 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="un amigo gratis" data-autor=" inma rubiales" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Un%20amigo%20gratis%2C%20precio%20%24234%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkcNIF9WMQzU0ln-_N5jQWrtK_JwFB0gcE73sGBdOj_VvkUDCDY3IxrsbVawylvygdG2o6onYteQqnuHcUHilsuMpsRR4_DuFc1GqusbItAlJIXudSk4TT6fy6hik8UGowhMcnor-7NZiZ-nYddmDy2YFxEgPX5ilSk8TSJJ7dNUM1Nb3S2GtkUgah-CGBuYvk6VpoAecXS2u5l7NxJye3NwoDnFMegk0Awb5rY=w1280" alt="Un amigo gratis">
+        <div class="titulo">Un amigo gratis</div>
+        <div class="autor"> inma rubiales</div>
+        <div class="precio">$234 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="un lugar cercano a la felicidad" data-autor="lia louis" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Un%20lugar%20cercano%20a%20la%20felicidad%2C%20precio%20%24150%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Un lugar cercano a la felicidad">
+        <div class="titulo">Un lugar cercano a la felicidad</div>
+        <div class="autor">Lia Louis</div>
+        <div class="precio">$150 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="yo antes de ti" data-autor="jojo moyes" data-categoria="Romance">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Yo%20antes%20de%20ti%2C%20precio%20%24245%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/Yo%20antes%20de%20ti.jpg" alt="Yo antes de ti">
+        <div class="titulo">Yo antes de ti</div>
+        <div class="autor">Jojo Moyes</div>
+        <div class="precio">$245 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="doemi" data-autor="kristopher rodas" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Doemi%2C%20precio%20%24220%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Doemi">
+        <div class="titulo">Doemi</div>
+        <div class="autor">kristopher Rodas</div>
+        <div class="precio">$220 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="el caballero de los siete reinos" data-autor="george r.r. martin" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20El%20caballero%20de%20los%20siete%20reinos%2C%20precio%20%24229%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="El caballero de los siete reinos">
+        <div class="titulo">El caballero de los siete reinos</div>
+        <div class="autor">George R.R. Martin</div>
+        <div class="precio">$229 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="harry potter 1 y la piedra filosofal" data-autor="j.k. rowling" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Harry%20potter%201%20y%20la%20piedra%20filosofal%2C%20precio%20%24210%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/81dxFCnAp0L.jpg" alt="Harry potter 1 y la piedra filosofal">
+        <div class="titulo">Harry potter 1 y la piedra filosofal</div>
+        <div class="autor">j.k. rowling</div>
+        <div class="precio">$210 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="harry potter 2 y lacamara secreta" data-autor="j.k rowling" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Harry%20potter%202%20y%20lacamara%20secreta%2C%20precio%20%24210%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://drive.google.com/uc?export=view&id=10_9IqZwinIDbANl9RE18idxse9Wo3V_H" alt="Harry potter 2 y lacamara secreta">
+        <div class="titulo">Harry potter 2 y lacamara secreta</div>
+        <div class="autor">j.k rowling</div>
+        <div class="precio">$210 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="harry potter 3 y el pricionero de azkaban" data-autor="j.k. rowling" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Harry%20potter%203%20y%20el%20pricionero%20de%20azkaban%2C%20precio%20%24210%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://drive.usercontent.google.com/download?id=10_9IqZwinIDbANl9RE18idxse9Wo3V_H&export=view&authuser=0" alt="Harry potter 3 y el pricionero de azkaban">
+        <div class="titulo">Harry potter 3 y el pricionero de azkaban</div>
+        <div class="autor">j.k. rowling</div>
+        <div class="precio">$210 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la ciudad y su muros inciertos" data-autor="haruki murakami" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20ciudad%20y%20su%20muros%20inciertos%2C%20precio%20%24389%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La ciudad y su muros inciertos">
+        <div class="titulo">La ciudad y su muros inciertos</div>
+        <div class="autor">Haruki Murakami</div>
+        <div class="precio">$389 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la guerra de los huracanes" data-autor="thea guanzon" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20guerra%20de%20los%20huracanes%2C%20precio%20%24399%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/La%20guerra%20de%20los%20huracanes.png" alt="La guerra de los huracanes">
+        <div class="titulo">La guerra de los huracanes</div>
+        <div class="autor">Thea Guanzon</div>
+        <div class="precio">$399 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la maldicion de amor verdadero" data-autor="stephanie garber" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20maldicion%20de%20amor%20verdadero%2C%20precio%20%24220%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/la%20maldicion%20de%20amor%20verdadero.jpg" alt="La maldicion de amor verdadero">
+        <div class="titulo">La maldicion de amor verdadero</div>
+        <div class="autor">stephanie Garber</div>
+        <div class="precio">$220 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="la vida invisible d addie larue" data-autor="v.e. schwab" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20La%20vida%20invisible%20D%20Addie%20Larue%2C%20precio%20%24230%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="La vida invisible D Addie Larue">
+        <div class="titulo">La vida invisible D Addie Larue</div>
+        <div class="autor">V.E. Schwab</div>
+        <div class="precio">$230 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="placeres violentos" data-autor="chloe gong" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Placeres%20violentos%2C%20precio%20%24235%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Placeres violentos">
+        <div class="titulo">Placeres violentos</div>
+        <div class="autor">Chloe Gong</div>
+        <div class="precio">$235 MXN</div>
+      </a>
+    </div>
+
+    <div class="producto" data-titulo="somnis" data-autor="kristopher rodas" data-categoria="Fantasía">
+      <div class="estrella" onclick="toggleFav(this)">☆</div>
+      <a href="https://wa.me/524751070540?text=Hola!%20Estoy%20interesado%2Fa%20en%20Somnis%2C%20precio%20%24180%20MXN" target="_blank" style="color:inherit;text-decoration:none;">
+        <img src="https://via.placeholder.com/200x300" alt="Somnis">
+        <div class="titulo">Somnis</div>
+        <div class="autor">kristopher Rodas</div>
+        <div class="precio">$180 MXN</div>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Controles de paginación -->
+  <div class="paginacion" id="paginacion">
+    <button id="prevBtn" onclick="cambiarPagina(paginaActual - 1)">← Anterior</button>
+    <div id="numerosPaginas"></div>
+    <button id="nextBtn" onclick="cambiarPagina(paginaActual + 1)">Siguiente →</button>
+    <div class="contador-pagina" id="contadorPagina"></div>
+  </div>
+
+  <button id="volverBtn" title="Volver a todas las categorías" onclick="volverACategorias()">←</button>
+  <button id="favoritosBtn" title="Ver favoritos" onclick="mostrarFavoritos()">⭐</button>
+  <a id="whatsapp" href="https://wa.me/524751070540" target="_blank">💬</a>
+  <button id="preguntarFavs" onclick="preguntarFavoritos()">Preguntar por estos títulos</button>
+
+<script>
+  // Variables globales para paginación
+  var librosPorPagina = 40;
+  var paginaActual = 1;
+  var totalPaginas = 1;
+  var todosLibros = [];
+  var librosFiltrados = [];
+  var showingFavs = false;
+
+  document.addEventListener("DOMContentLoaded", function(){
+    // Inicializar todos los libros
+    var productos = document.querySelectorAll(".producto");
+    todosLibros = Array.from(productos);
+    librosFiltrados = todosLibros.slice();
+    
+    // Inicializar paginación
+    totalPaginas = Math.ceil(librosFiltrados.length / librosPorPagina);
+    actualizarPaginacion();
+    mostrarPagina(1);
+
+    // Inicializar favoritos
+    favs = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+    
+    // Sincronizar estrellas
+    document.querySelectorAll(".producto").forEach(function(p){
+      var titleEl = p.querySelector(".titulo");
+      if(!titleEl) return;
+      var title = titleEl.innerText;
+      var star = p.querySelector(".estrella");
+      if(favs.indexOf(title) !== -1){
+        if(star) {
+          star.classList.add("act");
+          star.textContent = "★";
+        }
+      } else {
+        if(star) {
+          star.classList.remove("act");
+          star.textContent = "☆";
+        }
+      }
+    });
+
+    // Event listeners
+    var busc = document.getElementById("buscador");
+if(busc) busc.addEventListener("input", function(){ 
+  showingFavs = false; 
+  controlarBotonFavs(); 
+  actualizarBotonVolver();
+  filtrar(); 
+});
+
+var cat = document.getElementById("categoria");
+if(cat) cat.addEventListener("change", function(){ 
+  showingFavs = false; 
+  controlarBotonFavs(); 
+  actualizarBotonVolver();
+  filtrar(); 
+});
+
+
+    controlarBotonFavs();
+    actualizarBotonVolver();
+  });
+
+  // FUNCIONES DE PAGINACIÓN
+  function mostrarPagina(pagina) {
+    paginaActual = pagina;
+    var inicio = (pagina - 1) * librosPorPagina;
+    var fin = inicio + librosPorPagina;
+    
+    // Ocultar todos los libros primero
+    todosLibros.forEach(function(libro) {
+      libro.style.display = 'none';
+    });
+    
+    // Mostrar solo los libros de la página actual
+    for (var i = inicio; i < fin && i < librosFiltrados.length; i++) {
+      if (librosFiltrados[i]) {
+        librosFiltrados[i].style.display = 'block';
+      }
+    }
+    
+    actualizarPaginacion();
+    controlarBotonFavs();
+    actualizarBotonVolver();
+  }
+
+  function actualizarPaginacion() {
+    var numerosPaginas = document.getElementById("numerosPaginas");
+    var prevBtn = document.getElementById("prevBtn");
+    var nextBtn = document.getElementById("nextBtn");
+    var contadorPagina = document.getElementById("contadorPagina");
+    
+    if (!numerosPaginas) return;
+    
+    numerosPaginas.innerHTML = '';
+    
+    // Calcular qué números de página mostrar
+    var inicio = Math.max(1, paginaActual - 2);
+    var fin = Math.min(totalPaginas, paginaActual + 2);
+    
+    // Si estamos cerca del inicio, mostrar más páginas al final
+    if (paginaActual <= 3) {
+      fin = Math.min(totalPaginas, 5);
+    }
+    
+    // Si estamos cerca del final, mostrar más páginas al inicio
+    if (paginaActual >= totalPaginas - 2) {
+      inicio = Math.max(1, totalPaginas - 4);
+    }
+    
+    // Botones numéricos de páginas
+    for (var i = inicio; i <= fin; i++) {
+      var btn = document.createElement('button');
+      btn.textContent = i;
+      btn.onclick = function() { cambiarPagina(parseInt(this.textContent)); };
+      if (i === paginaActual) {
+        btn.classList.add('active');
+      }
+      numerosPaginas.appendChild(btn);
+    }
+    
+    // Actualizar estado de botones anterior/siguiente
+    prevBtn.disabled = paginaActual === 1;
+    nextBtn.disabled = paginaActual === totalPaginas || totalPaginas === 0;
+    
+    // Actualizar contador
+    var inicioLibro = (paginaActual - 1) * librosPorPagina + 1;
+    var finLibro = Math.min(paginaActual * librosPorPagina, librosFiltrados.length);
+    contadorPagina.textContent = "Página " + paginaActual + " de " + totalPaginas + 
+                                " | Mostrando " + inicioLibro + "-" + finLibro + " de " + librosFiltrados.length;
+  }
+
+  function cambiarPagina(pagina) {
+    if (pagina < 1 || pagina > totalPaginas) return;
+    mostrarPagina(pagina);
+  }
+
+  // FUNCIÓN DE FILTRADO
+  function filtrar(){
+    var txt = (document.getElementById("buscador").value || "").toLowerCase();
+    var cat = (document.getElementById("categoria").value || "");
+    
+    // Filtrar libros
+    librosFiltrados = todosLibros.filter(function(p){
+      var t = (p.getAttribute("data-titulo") || "").toLowerCase();
+      var a = (p.getAttribute("data-autor") || "").toLowerCase();
+      var c = (p.getAttribute("data-categoria") || "");
+      
+      var okText = (t.indexOf(txt) !== -1) || (a.indexOf(txt) !== -1);
+      var okCat = (!cat || c === cat);
+      
+      return okText && okCat;
+    });
+    
+    // Recalcular paginación
+    totalPaginas = Math.ceil(librosFiltrados.length / librosPorPagina);
+    paginaActual = 1;
+    
+    // Mostrar primera página de resultados filtrados
+    mostrarPagina(1);
+  }
+
+  // FUNCIONES DE FAVORITOS CON ANIMACIONES
+  function toggleFav(el){
+  var card = el.parentElement;
+  var titleEl = card.querySelector(".titulo");
+  if(!titleEl) return;
+  var title = titleEl.innerText;
+  var idx = favs.indexOf(title);
+  
+  // Efecto visual
+  if(idx !== -1){
+    // Remover favorito
+    favs.splice(idx,1);
+    el.classList.remove("act");
+    el.textContent = "☆";
+    card.classList.add("fav-removed");
+    setTimeout(function(){
+      card.classList.remove("fav-removed");
+    }, 300);
+  } else {
+    // Agregar favorito
+    favs.push(title);
+    el.classList.add("act");
+    el.textContent = "★";
+    card.classList.add("fav-added");
+    setTimeout(function(){
+      card.classList.remove("fav-added");
+    }, 300);
+  }
+  
+  localStorage.setItem("favoritosTertulia", JSON.stringify(favs));
+  
+  // Si estamos viendo favoritos y quitamos uno, actualizar la vista
+  if(showingFavs) {
+    // Si quitamos un favorito mientras estamos en esa vista, quitarlo inmediatamente
+    if(idx !== -1) {
+      mostrarFavoritos();
+    }
+  }
+  
+  controlarBotonFavs();
+  actualizarBotonVolver();
+}
+
+function mostrarFavoritos(){
+  showingFavs = true;
+  document.getElementById("favoritosBtn").classList.add("act");
+  
+  // Filtrar solo favoritos
+  librosFiltrados = todosLibros.filter(function(p){
+    var titleEl = p.querySelector(".titulo");
+    if(!titleEl) return false;
+    var title = titleEl.innerText;
+    return favs.indexOf(title) !== -1;
+  });
+  
+  // Recalcular paginación
+  totalPaginas = Math.ceil(librosFiltrados.length / librosPorPagina);
+  paginaActual = 1;
+  
+  // Mostrar primera página de favoritos
+  mostrarPagina(1);
+  controlarBotonFavs();
+  actualizarBotonVolver();
+}
+
+function volverACategorias(){
+  showingFavs = false;
+  document.getElementById("favoritosBtn").classList.remove("act");
+  
+  // Mostrar todos los libros
+  librosFiltrados = todosLibros.slice();
+  totalPaginas = Math.ceil(librosFiltrados.length / librosPorPagina);
+  paginaActual = 1;
+  
+  // Limpiar la búsqueda y categoría (pero no disparar eventos)
+  document.getElementById("buscador").value = "";
+  document.getElementById("categoria").value = "";
+  
+  mostrarPagina(1);
+  
+  controlarBotonFavs();
+  actualizarBotonVolver();
+}
+
+function controlarBotonFavs(){
+  var arr = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+  var btn = document.getElementById("preguntarFavs");
+  
+  if(!btn) return;
+  
+  // Mostrar botón solo si hay favoritos y estamos en vista de favoritos
+  if(showingFavs && arr.length > 0){
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+function actualizarBotonVolver(){
+  var volverBtn = document.getElementById("volverBtn");
+  if(!volverBtn) return;
+  
+  // Mostrar botón de volver solo cuando estamos en favoritos
+  if(showingFavs){
+    volverBtn.style.display = "block";
+  } else {
+    volverBtn.style.display = "none";
+  }
+}
+
+function preguntarFavoritos(){
+  var arr = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+  if(!arr.length){ 
+    alert("No hay títulos en favoritos."); 
+    return; 
+  }
+  var txt = "Hola! Me interesa info sobre: " + arr.join("; ");
+  window.open("https://wa.me/524751070540?text=" + encodeURIComponent(txt), "_blank");
+}
+
+</script>
+
+</body>
+</html>
