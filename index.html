@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tertulia Librería | Catálogo Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0d47a1;
+            --secondary-blue: #1565c0;
+            --light-blue: #e3f2fd;
+            --accent-blue: #42a5f5;
+            --dark-blue: #0a3d7a;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --text-white: #ffffff;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(13, 71, 161, 0.08);
+            --shadow-hover: 0 8px 24px rgba(13, 71, 161, 0.15);
+            --radius: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 100px;
+        }
+
+        /* HEADER MEJORADO */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: var(--text-white);
+            padding: 1.5rem 1rem;
+            box-shadow: 0 4px 20px rgba(13, 71, 161, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .controls-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .controls-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* SELECT MEJORADO */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-blue);
+            z-index: 1;
+        }
+
+        #categoria {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--light-blue);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            font-size: 1rem;
+            color: var(--text-dark);
+            appearance: none;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        #categoria:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.2);
+        }
+
+        /* SEARCH MEJORADO */
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-blue);
+        }
+
+        #buscador {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--light-blue);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            font-size: 1rem;
+            color: var(--text-dark);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        #buscador:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.2);
+        }
+
+        #buscador::placeholder {
+            color: var(--text-light);
+        }
+
+        /* CATALOGO MEJORADO */
+        .catalogo {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .catalogo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .catalogo-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .catalogo-count {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .grid-catalogo {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 0.5rem;
+        }
+
+        /* TARJETA DE LIBRO MEJORADA */
+        .libro-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+            border: 1px solid rgba(13, 71, 161, 0.1);
+        }
+
+        .libro-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .libro-imagen-container {
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, var(--light-blue), #ffffff);
+        }
+
+        .libro-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .libro-card:hover .libro-imagen {
+            transform: scale(1.05);
+        }
+
+        .libro-favorito {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #ccc;
+            font-size: 1.25rem;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .libro-favorito:hover {
+            color: #ffd700;
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .libro-favorito.activo {
+            color: #ffd700;
+            background: white;
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .libro-info {
+            padding: 1.5rem;
+        }
+
+        .libro-titulo {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .libro-autor {
+            color: var(--text-light);
+            font-size: 0.9375rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .libro-autor i {
+            color: var(--accent-blue);
+        }
+
+        .libro-categoria {
+            display: inline-block;
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .libro-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(13, 71, 161, 0.1);
+        }
+
+        .libro-precio {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .libro-precio span {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: normal;
+        }
+
+        .libro-boton {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .libro-boton:hover {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
+        }
+
+        /* PAGINACIÓN MEJORADA */
+        .paginacion-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .paginacion {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .paginacion-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--light-blue);
+            color: var(--text-dark);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            min-width: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .paginacion-btn:hover:not(:disabled) {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .paginacion-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .paginacion-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .paginacion-info {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            background: var(--light-blue);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        /* BOTONES FLOTANTES MEJORADOS */
+        .floating-buttons {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .floating-button {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            font-size: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            z-index: 1;
+        }
+
+        .floating-button-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .floating-button-favoritos {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+        }
+
+        .floating-button-favoritos.activo {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: var(--text-dark);
+        }
+
+        .floating-button-volver {
+            background: linear-gradient(135deg, #666, #444);
+            color: white;
+            display: none;
+        }
+
+        .floating-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .floating-button-tooltip {
+            position: absolute;
+            right: 4.5rem;
+            background: var(--text-dark);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .floating-button:hover .floating-button-tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* BOTÓN PREGUNTAR POR FAVORITOS */
+        .boton-favoritos-lote {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(13, 71, 161, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 999;
+            display: none;
+        }
+
+        .boton-favoritos-lote:hover {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            transform: translateX(-50%) translateY(-3px);
+            box-shadow: 0 8px 30px rgba(13, 71, 161, 0.4);
+        }
+
+        /* LOADER */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .loader i {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ESTADO VACÍO */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--light-blue);
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .grid-catalogo {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .header-content {
+                gap: 1rem;
+            }
+
+            .catalogo-title {
+                font-size: 1.5rem;
+            }
+
+            .floating-buttons {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+
+            .floating-button {
+                width: 3rem;
+                height: 3rem;
+                font-size: 1rem;
+            }
+
+            .boton-favoritos-lote {
+                bottom: 1.5rem;
+                padding: 0.875rem 1.5rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-catalogo {
+                grid-template-columns: 1fr;
+            }
+
+            .catalogo-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .floating-buttons {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .floating-button-tooltip {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER MEJORADO -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    <div class="logo-icon">📚</div>
+                    <div>
+                        <div class="logo-text">Tertulia Librería</div>
+                        <div class="logo-subtitle">Tu espacio literario</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls-section">
+                <div class="select-wrapper">
+                    <i class="fas fa-filter"></i>
+                    <select id="categoria">
+                        <option value="">Todas las categorías</option>
+                        <option value="18">18</option><option value="Autoayuda">Autoayuda</option><option value="Fantasía">Fantasía</option><option value="Juvenil">Juvenil</option><option value="LGBT+">LGBT+</option><option value="Misterio">Misterio</option><option value="No ficción">No ficción</option><option value="Romance">Romance</option><option value="psicologicos">psicologicos</option>
+                    </select>
+                </div>
+                
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="buscador" placeholder="Buscar por título, autor o categoría...">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CATÁLOGO -->
+    <main class="catalogo">
+        <div class="catalogo-header">
+            <h1 class="catalogo-title">
+                <i class="fas fa-book-open"></i>
+                Nuestro Catálogo
+            </h1>
+            <div class="catalogo-count">
+                <span id="total-libros">60</span> libros disponibles
+            </div>
+        </div>
+
+        <div class="grid-catalogo" id="catalogo">
+            <div class="libro-card" data-titulo="a dos metros de ti" data-autor="rachael lippincott" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfQBwiQq81mXezN-ELObwU0d-wDjmxVmmQTt2E42Ch7uy1hSHyI9IjxabRuOMNEY5rjYzupkyGSQSsFwzCdliPrGOOEXNT9lxI0y83TfeQjzm-M1EIeZCL5xYcd3TAKQaBz1ype_LUcoVvI7ZTFLFU1WjAwgDFeGuOggdiXhhdFyfcJiLR7IQuarWsOuv-VjXDVAZCuHocMh2keMbkktHDkw3WBWgj6K4Vm=w1280" alt="a dos metros de ti" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'a dos metros de ti')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">a dos metros de ti</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Rachael Lippincott
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $170 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('a dos metros de ti', '170')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="after" data-autor="anna todd" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfDpHEUrLp5RkPB5R7qJ1_0PQXI3OvUzGR85sw-3kjeLSgrwPAKgYTP_7C5JG_PvIag3J-kRFwTrl6AJUjPZdwczXtV2TybCKk3xJKjEli2HExMz-zy7k8VABNfxos5_uLqit7E2uQxuxFAdOY-avq1O_Ux6bCLBQ_SieYj-tdGABrYVwQ8AfCU5fyYU8jN3EiGJQmxrtQyU4vEl67DfqrYUfGKyNVRCeyOZfU=w1280" alt="After" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'After')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">After</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        anna todd
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $250 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('After', '250')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="al final muere el primero" data-autor="adam silvera" data-categoria="LGBT+">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="al final muere el primero" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'al final muere el primero')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">al final muere el primero</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        adam silvera
+                    </p>
+                    <span class="libro-categoria">LGBT+</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $220 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('al final muere el primero', '220')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="al final mueren los dos" data-autor="adam silvera" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfTku74Y-Gi3IrZ3itp81dOPnYRekovzPcemqZjAPRP7d7gWyzm_qQ-c-kbxLilNKs-F6g-DChE1TMdBFN6vbSoywOnKRV6urHDqbp_Za5ie2aP9t1oKW6-02MEjmegLygFUK0-V2Kc3lRLuyZTk_DOv4JZ-f93hDOlgvLWknHr5lzQjc1-SeoqS7oDz2WOGnmJmDaOP79oLVxmylgzqWOVWhC2j1kxdMRuRLI=w1280" alt="al final mueren los dos" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'al final mueren los dos')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">al final mueren los dos</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        adam silvera
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $210 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('al final mueren los dos', '210')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="a tres metros sobre el cielio " data-autor="federico moccia" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://i.ibb.co/bRB7jTBB/A-tres-metros-sobre-el-cielio.jpg" alt="A tres metros sobre el cielio " class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'A tres metros sobre el cielio ')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">A tres metros sobre el cielio </h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Federico Moccia
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $179 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('A tres metros sobre el cielio ', '179')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="audaz productivo y feliz" data-autor="robin sharma" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Audaz productivo y feliz" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Audaz productivo y feliz')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Audaz productivo y feliz</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Robin Sharma
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $180 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Audaz productivo y feliz', '180')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="a un paso de ti" data-autor="hannah bonam young" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="A un paso de ti" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'A un paso de ti')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">A un paso de ti</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Hannah Bonam Young
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $249 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('A un paso de ti', '249')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="boos" data-autor="eva mużoz" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Boos" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Boos')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Boos</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Eva Mużoz
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $360 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Boos', '360')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="censurado" data-autor="darlis stefany" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Censurado" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Censurado')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Censurado</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Darlis Stefany
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $230 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Censurado', '230')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="como suprimir las preocupaciones y disfrutar de la vida" data-autor="dale carnegie" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Como suprimir las preocupaciones y disfrutar de la vida" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Como suprimir las preocupaciones y disfrutar de la vida')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Como suprimir las preocupaciones y disfrutar de la vida</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        dale carnegie
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $199 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Como suprimir las preocupaciones y disfrutar de la vida', '199')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="doemi" data-autor="kristopher rodas" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Doemi" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Doemi')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Doemi</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        kristopher Rodas
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $220 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Doemi', '220')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el arte de engażar al karma" data-autor="elisabet benavent" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="El arte de engażar al karma" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El arte de engażar al karma')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El arte de engażar al karma</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Elisabet Benavent
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $255 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El arte de engażar al karma', '255')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el caballero de los siete reinos" data-autor="george r.r. martin" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="El caballero de los siete reinos" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El caballero de los siete reinos')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El caballero de los siete reinos</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        George R.R. Martin
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $229 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El caballero de los siete reinos', '229')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el camino del hombre superior" data-autor="david deida" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="El camino del hombre superior" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El camino del hombre superior')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El camino del hombre superior</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        David Deida
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $195 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El camino del hombre superior', '195')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el color rojo" data-autor="m.moon" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="El color rojo" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El color rojo')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El color rojo</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        M.moon
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $290 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El color rojo', '290')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el llano en llamas" data-autor="juan rulfo" data-categoria="No ficción">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/el%20llano%20en%20llamas.jpg" alt="el llano en llamas" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'el llano en llamas')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">el llano en llamas</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        juan rulfo
+                    </p>
+                    <span class="libro-categoria">No ficción</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $170 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('el llano en llamas', '170')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el obstaculo es el camino" data-autor="ryan holiday" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="El obstaculo es el camino" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El obstaculo es el camino')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El obstaculo es el camino</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Ryan Holiday
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $200 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El obstaculo es el camino', '200')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el quitni acuerdo" data-autor="miguel ruiz" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/el%20quinto%20acuerdo.jfif" alt="El quitni acuerdo" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El quitni acuerdo')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El quitni acuerdo</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Miguel Ruiz
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $170 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El quitni acuerdo', '170')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="el sutil arte de que te importe un carajo" data-autor="mark manson" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="El sutil arte de que te importe un carajo" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'El sutil arte de que te importe un carajo')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">El sutil arte de que te importe un carajo</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        mark manson
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $195 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('El sutil arte de que te importe un carajo', '195')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="focus" data-autor="daneil goleman" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Focus" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Focus')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Focus</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Daneil Goleman
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $230 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Focus', '230')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="hacer el mal" data-autor="dra. julia shaw" data-categoria="psicologicos">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Hacer el mal" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Hacer el mal')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Hacer el mal</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Dra. Julia shaw
+                    </p>
+                    <span class="libro-categoria">psicologicos</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $169 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Hacer el mal', '169')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="harry potter 1 y la piedra filosofal" data-autor="j.k. rowling" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/81dxFCnAp0L.jpg" alt="Harry potter 1 y la piedra filosofal" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Harry potter 1 y la piedra filosofal')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Harry potter 1 y la piedra filosofal</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        j.k. rowling
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $210 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Harry potter 1 y la piedra filosofal', '210')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="harry potter 2 y lacamara secreta" data-autor="j.k rowling" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://drive.google.com/uc?export=view&id=10_9IqZwinIDbANl9RE18idxse9Wo3V_H" alt="Harry potter 2 y lacamara secreta" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Harry potter 2 y lacamara secreta')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Harry potter 2 y lacamara secreta</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        j.k rowling
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $210 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Harry potter 2 y lacamara secreta', '210')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="harry potter 3 y el pricionero de azkaban" data-autor="j.k. rowling" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://drive.usercontent.google.com/download?id=10_9IqZwinIDbANl9RE18idxse9Wo3V_H&export=view&authuser=0" alt="Harry potter 3 y el pricionero de azkaban" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Harry potter 3 y el pricionero de azkaban')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Harry potter 3 y el pricionero de azkaban</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        j.k. rowling
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $210 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Harry potter 3 y el pricionero de azkaban', '210')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="hasta que nos quedemos sin estrellas" data-autor="inma rubiales" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkcq_XhZucqrk7lg7_XlpzfsMF9JPOf5nNJtjQyCDErgBcsIQluy4XICtfs0s1b2gR8nn-UDG3CqyEpDfcLWCNy7PWeZRCCDmba52ADUidjKGZ2SvoNog36MuOansx9hlDuOvvieICjimafajjODxEe6y53n45xnGpxJqqN0JU5hr155hCrFV_JAcCsug1PhM7eD0K33Kc7R616ynjPbRiInLg5Oy7vvZEKFBcI=w1280" alt="hasta que nos quedemos sin estrellas" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'hasta que nos quedemos sin estrellas')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">hasta que nos quedemos sin estrellas</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        inma rubiales
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $245 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('hasta que nos quedemos sin estrellas', '245')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="herido" data-autor="tabitha suzuma" data-categoria="psicologicos">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Herido" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Herido')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Herido</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Tabitha Suzuma
+                    </p>
+                    <span class="libro-categoria">psicologicos</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $200 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Herido', '200')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="irresitible error 1" data-autor="melisa ibarra" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Irresitible error 1" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Irresitible error 1')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Irresitible error 1</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Melisa Ibarra
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $269 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Irresitible error 1', '269')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la ciudad y su muros inciertos" data-autor="haruki murakami" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La ciudad y su muros inciertos" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La ciudad y su muros inciertos')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La ciudad y su muros inciertos</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Haruki Murakami
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $389 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La ciudad y su muros inciertos', '389')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la empleada " data-autor="freida mcfadden" data-categoria="Misterio">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La empleada " class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La empleada ')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La empleada </h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Freida McFadden
+                    </p>
+                    <span class="libro-categoria">Misterio</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $200 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La empleada ', '200')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la guerra de los huracanes" data-autor="thea guanzon" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/La%20guerra%20de%20los%20huracanes.png" alt="La guerra de los huracanes" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La guerra de los huracanes')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La guerra de los huracanes</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Thea Guanzon
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $399 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La guerra de los huracanes', '399')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la hora azul" data-autor="paula hawkins" data-categoria="psicologicos">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La hora azul" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La hora azul')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La hora azul</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Paula Hawkins
+                    </p>
+                    <span class="libro-categoria">psicologicos</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $230 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La hora azul', '230')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la llamada del coraje" data-autor="ryan holiday" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La llamada del coraje" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La llamada del coraje')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La llamada del coraje</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Ryan Holiday
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $200 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La llamada del coraje', '200')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la maldicion de amor verdadero" data-autor="stephanie garber" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/la%20maldicion%20de%20amor%20verdadero.jpg" alt="La maldicion de amor verdadero" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La maldicion de amor verdadero')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La maldicion de amor verdadero</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        stephanie Garber
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $220 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La maldicion de amor verdadero', '220')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la paciente silenciosa" data-autor="alex michaelides" data-categoria="psicologicos">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La paciente silenciosa" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La paciente silenciosa')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La paciente silenciosa</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Alex Michaelides
+                    </p>
+                    <span class="libro-categoria">psicologicos</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $225 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La paciente silenciosa', '225')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="lascivia 1" data-autor="eva mużoz" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Lascivia 1" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Lascivia 1')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Lascivia 1</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Eva Mużoz
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $215 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Lascivia 1', '215')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="las ventajas de ser invisible" data-autor="stephen chbosky" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkfZ9QMel-oskUgiA1U-S04r_SWgYGahKR829p91EiGodmf93Jh9q4cB1f-9GSZ7fe87ZuMaLlExisCd7Sfn3Xcze_C8gGM626s5pANTA7sbbFBl_X3LUt8iIKqjw3uIRUwmxSaQZ9rwKSTMf6_B-qHVeV2_JGBjfQe1xVjubXC9M3vxrsX2gZXa-llSP2iHmGRDz69lNSSzn7c3OTwJeZU684mY1sDg96rvEnc=w1280" alt="Las ventajas de ser invisible" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Las ventajas de ser invisible')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Las ventajas de ser invisible</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        stephen chbosky
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $180 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Las ventajas de ser invisible', '180')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la ultima carta" data-autor="jose l. rivera" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La ultima carta" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La ultima carta')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La ultima carta</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Jose L. Rivera
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $170 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La ultima carta', '170')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="la vida invisible d addie larue" data-autor="v.e. schwab" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="La vida invisible D Addie Larue" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'La vida invisible D Addie Larue')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">La vida invisible D Addie Larue</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        V.E. Schwab
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $230 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('La vida invisible D Addie Larue', '230')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="liberate de la codependencia" data-autor="melody beattie" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Liberate de la codependencia" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Liberate de la codependencia')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Liberate de la codependencia</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        melody beattie
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $215 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Liberate de la codependencia', '215')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="los 5 lenguages del amor " data-autor="gary chapman" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Los 5 lenguages del amor " class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Los 5 lenguages del amor ')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Los 5 lenguages del amor </h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        gary chapman
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $15 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Los 5 lenguages del amor ', '15')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="los compas y el diamantito legendario " data-autor="" data-categoria="Juvenil">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="los compas y el diamantito legendario " class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'los compas y el diamantito legendario ')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">los compas y el diamantito legendario </h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        
+                    </p>
+                    <span class="libro-categoria">Juvenil</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $190 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('los compas y el diamantito legendario ', '190')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="los cuatro acuerdos " data-autor="miguel ruiz" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/images.jfif" alt="Los cuatro acuerdos " class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Los cuatro acuerdos ')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Los cuatro acuerdos </h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Miguel ruiz
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $125 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Los cuatro acuerdos ', '125')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="lujuria 1" data-autor="eva mużoz" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Lujuria 1" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Lujuria 1')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Lujuria 1</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Eva Mużoz
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $265 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Lujuria 1', '265')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="mientras te olvido" data-autor="nacario portal arraez" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Mientras te olvido" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Mientras te olvido')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Mientras te olvido</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Nacario Portal Arraez
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $210 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Mientras te olvido', '210')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="mil besos tuyos" data-autor="tillie cole" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Mil besos tuyos" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Mil besos tuyos')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Mil besos tuyos</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Tillie Cole
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $220 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Mil besos tuyos', '220')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="nuestro lugar en el mundo" data-autor="inma rubiales" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkeKgg8Q9E5E_p-QrkeR5HBGV48108bSRGe5WI_kzFA7gz_HQaVVYOyuVfF68dNeJoeFSgTKg8iuLvPZICorw8yagR5uUuLIKJyabYjOfdNdDRYC6QhzOzoGDl6l-G909-hJdJNa8qh1YbBj59tVTSphCaiHMC1YeK_Dc-S0B0RY9AQIJPHYen6nv6hvRftJFIATl2GitPp_zQ3nPPeRImf4wvBU5NEfBXwq=w1280" alt="Nuestro lugar en el mundo" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Nuestro lugar en el mundo')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Nuestro lugar en el mundo</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        inma rubiales
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $259 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Nuestro lugar en el mundo', '259')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="padre" data-autor="sierra simone" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/padre.jpg" alt="Padre" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Padre')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Padre</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        sierra simone
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $225 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Padre', '225')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="pecador" data-autor="sierra simone" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/pecador.jpg" alt="Pecador" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Pecador')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Pecador</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        sierra simone
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $225 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Pecador', '225')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="pedro paramo" data-autor="juab rulfo" data-categoria="No ficción">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="pedro paramo" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'pedro paramo')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">pedro paramo</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        juab rulfo
+                    </p>
+                    <span class="libro-categoria">No ficción</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $190 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('pedro paramo', '190')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="placeres violentos" data-autor="chloe gong" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Placeres violentos" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Placeres violentos')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Placeres violentos</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Chloe Gong
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $235 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Placeres violentos', '235')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="psico, la historia de la mente humana" data-autor="paul bloom" data-categoria="psicologicos">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Psico, la historia de la mente humana" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Psico, la historia de la mente humana')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Psico, la historia de la mente humana</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Paul Bloom
+                    </p>
+                    <span class="libro-categoria">psicologicos</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $215 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Psico, la historia de la mente humana', '215')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="santo" data-autor="sierra simone" data-categoria="18">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/santo.jpg" alt="Santo" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Santo')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Santo</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        sierra simone
+                    </p>
+                    <span class="libro-categoria">18</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $235 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Santo', '235')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="ser justo en un mundo injusto" data-autor="ryan holiday" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Ser justo en un mundo injusto" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Ser justo en un mundo injusto')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Ser justo en un mundo injusto</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Ryan Holiday
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $210 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Ser justo en un mundo injusto', '210')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="somnis" data-autor="kristopher rodas" data-categoria="Fantasía">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Somnis" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Somnis')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Somnis</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        kristopher Rodas
+                    </p>
+                    <span class="libro-categoria">Fantasía</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $180 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Somnis', '180')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="tan cerca de ti" data-autor="antonio hidalgo" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Tan cerca de ti" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Tan cerca de ti')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Tan cerca de ti</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Antonio Hidalgo
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $245 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Tan cerca de ti', '245')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="una carta para ti que nunca leeras" data-autor="anna marie klee" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Una carta para ti que nunca leeras" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Una carta para ti que nunca leeras')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Una carta para ti que nunca leeras</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Anna Marie Klee
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $179 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Una carta para ti que nunca leeras', '179')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="un amigo gratis" data-autor=" inma rubiales" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://lh3.googleusercontent.com/sitesv/AAzXCkcNIF9WMQzU0ln-_N5jQWrtK_JwFB0gcE73sGBdOj_VvkUDCDY3IxrsbVawylvygdG2o6onYteQqnuHcUHilsuMpsRR4_DuFc1GqusbItAlJIXudSk4TT6fy6hik8UGowhMcnor-7NZiZ-nYddmDy2YFxEgPX5ilSk8TSJJ7dNUM1Nb3S2GtkUgah-CGBuYvk6VpoAecXS2u5l7NxJye3NwoDnFMegk0Awb5rY=w1280" alt="Un amigo gratis" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Un amigo gratis')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Un amigo gratis</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                         inma rubiales
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $234 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Un amigo gratis', '234')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="un lugar cercano a la felicidad" data-autor="lia louis" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="Un lugar cercano a la felicidad" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Un lugar cercano a la felicidad')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Un lugar cercano a la felicidad</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Lia Louis
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $150 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Un lugar cercano a la felicidad', '150')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="yo antes de ti" data-autor="jojo moyes" data-categoria="Romance">
+                <div class="libro-imagen-container">
+                    <img src="https://raw.githubusercontent.com/hermessemreh82-maker/tertulia/refs/heads/main/img/Yo%20antes%20de%20ti.jpg" alt="Yo antes de ti" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'Yo antes de ti')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">Yo antes de ti</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        Jojo Moyes
+                    </p>
+                    <span class="libro-categoria">Romance</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $245 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('Yo antes de ti', '245')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="libro-card" data-titulo="yo puedo tu puedes" data-autor="margarita pasos" data-categoria="Autoayuda">
+                <div class="libro-imagen-container">
+                    <img src="https://via.placeholder.com/300x400/0d47a1/ffffff?text=Tertulia" alt="yo puedo tu puedes" class="libro-imagen" loading="lazy">
+                    <button class="libro-favorito" onclick="toggleFav(this, 'yo puedo tu puedes')">
+                        <i class="far fa-star"></i>
+                    </button>
+                </div>
+                <div class="libro-info">
+                    <h3 class="libro-titulo">yo puedo tu puedes</h3>
+                    <p class="libro-autor">
+                        <i class="fas fa-user-pen"></i>
+                        margarita pasos
+                    </p>
+                    <span class="libro-categoria">Autoayuda</span>
+                    <div class="libro-footer">
+                        <div class="libro-precio">
+                            $205 <span>MXN</span>
+                        </div>
+                        <button class="libro-boton" onclick="consultarWhatsApp('yo puedo tu puedes', '205')">
+                            <i class="fab fa-whatsapp"></i>
+                            Consultar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <i class="fas fa-book-open"></i>
+            <h3>No se encontraron libros</h3>
+            <p>Intenta con otra búsqueda o categoría</p>
+        </div>
+    </main>
+
+    <!-- PAGINACIÓN MEJORADA -->
+    <div class="paginacion-container">
+        <div class="paginacion" id="paginacion">
+            <button class="paginacion-btn" id="prevBtn" onclick="cambiarPagina(paginaActual - 1)" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div id="numerosPaginas"></div>
+            <button class="paginacion-btn" id="nextBtn" onclick="cambiarPagina(paginaActual + 1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div class="paginacion-info" id="paginacion-info">
+            Página <span id="pagina-actual">1</span> de <span id="total-paginas">1</span> • 
+            Mostrando <span id="libros-mostrados">12</span> de <span id="total-libros-contador">60</span> libros
+        </div>
+    </div>
+
+    <!-- BOTONES FLOTANTES MEJORADOS -->
+    <div class="floating-buttons">
+        <button class="floating-button floating-button-volver" id="volverBtn" onclick="volverACategorias()">
+            <i class="fas fa-arrow-left"></i>
+            <span class="floating-button-tooltip">Volver al catálogo</span>
+        </button>
+        
+        <button class="floating-button floating-button-favoritos" id="favoritosBtn" onclick="mostrarFavoritos()">
+            <i class="fas fa-star"></i>
+            <span class="floating-button-tooltip">Ver favoritos</span>
+        </button>
+        
+        <a class="floating-button floating-button-whatsapp" href="https://wa.me/524751070540" target="_blank" id="whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <span class="floating-button-tooltip">Contactar por WhatsApp</span>
+        </a>
+    </div>
+
+    <button class="boton-favoritos-lote" id="preguntarFavs" onclick="preguntarFavoritos()">
+        <i class="fas fa-shopping-cart"></i>
+        Preguntar por favoritos
+    </button>
+
+    <script>
+        // ==================== CONFIGURACIÓN ====================
+        const librosPorPagina = 12;
+        let paginaActual = 1;
+        let totalPaginas = 1;
+        let todosLibros = [];
+        let librosFiltrados = [];
+        let showingFavs = false;
+        const numeroWhatsApp = "524751070540";
+        
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inicializar todos los libros
+            todosLibros = Array.from(document.querySelectorAll(".libro-card"));
+            librosFiltrados = todosLibros.slice();
+            
+            // Cargar favoritos del localStorage
+            cargarFavoritos();
+            
+            // Inicializar paginación
+            actualizarPaginacion();
+            mostrarPagina(1);
+            
+            // Configurar event listeners
+            document.getElementById("buscador").addEventListener("input", filtrar);
+            document.getElementById("categoria").addEventListener("change", filtrar);
+        });
+        
+        // ==================== FUNCIONES DE FAVORITOS ====================
+        function cargarFavoritos() {
+            const favs = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+            
+            document.querySelectorAll(".libro-card").forEach(function(card) {
+                const titulo = card.querySelector(".libro-titulo").textContent;
+                const starBtn = card.querySelector(".libro-favorito");
+                
+                if (favs.includes(titulo)) {
+                    starBtn.classList.add("activo");
+                    starBtn.innerHTML = '<i class="fas fa-star"></i>';
+                }
+            });
+            
+            actualizarBotonFavoritos();
+        }
+        
+        function toggleFav(btn, titulo) {
+            const favs = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+            const index = favs.indexOf(titulo);
+            
+            if (index === -1) {
+                // Agregar a favoritos
+                favs.push(titulo);
+                btn.classList.add("activo");
+                btn.innerHTML = '<i class="fas fa-star"></i>';
+                btn.parentElement.parentElement.classList.add("fav-added");
+                setTimeout(() => btn.parentElement.parentElement.classList.remove("fav-added"), 300);
+            } else {
+                // Remover de favoritos
+                favs.splice(index, 1);
+                btn.classList.remove("activo");
+                btn.innerHTML = '<i class="far fa-star"></i>';
+                btn.parentElement.parentElement.classList.add("fav-removed");
+                setTimeout(() => btn.parentElement.parentElement.classList.remove("fav-removed"), 300);
+                
+                // Si estamos en vista de favoritos, actualizar
+                if (showingFavs) {
+                    setTimeout(filtrar, 300);
+                }
+            }
+            
+            localStorage.setItem("favoritosTertulia", JSON.stringify(favs));
+            actualizarBotonFavoritos();
+        }
+        
+        function actualizarBotonFavoritos() {
+            const favs = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+            const btn = document.getElementById("preguntarFavs");
+            
+            if (favs.length > 0 && showingFavs) {
+                btn.style.display = "flex";
+                btn.innerHTML = `<i class="fas fa-shopping-cart"></i> Preguntar por (${favs.length}) favoritos`;
+            } else {
+                btn.style.display = "none";
+            }
+        }
+        
+        // ==================== FUNCIONES DE PAGINACIÓN ====================
+        function mostrarPagina(pagina) {
+            paginaActual = pagina;
+            const inicio = (pagina - 1) * librosPorPagina;
+            const fin = inicio + librosPorPagina;
+            
+            // Ocultar todos
+            librosFiltrados.forEach(libro => libro.style.display = 'none');
+            
+            // Mostrar solo los de esta página
+            for (let i = inicio; i < fin && i < librosFiltrados.length; i++) {
+                if (librosFiltrados[i]) {
+                    librosFiltrados[i].style.display = 'block';
+                }
+            }
+            
+            actualizarPaginacion();
+            scrollToTop();
+        }
+        
+        function actualizarPaginacion() {
+            totalPaginas = Math.ceil(librosFiltrados.length / librosPorPagina);
+            const numerosPaginas = document.getElementById("numerosPaginas");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            
+            // Actualizar números de página
+            numerosPaginas.innerHTML = '';
+            let inicio = Math.max(1, paginaActual - 2);
+            let fin = Math.min(totalPaginas, paginaActual + 2);
+            
+            if (paginaActual <= 3) fin = Math.min(totalPaginas, 5);
+            if (paginaActual >= totalPaginas - 2) inicio = Math.max(1, totalPaginas - 4);
+            
+            for (let i = inicio; i <= fin; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'paginacion-btn' + (i === paginaActual ? ' active' : '');
+                btn.textContent = i;
+                btn.onclick = () => cambiarPagina(i);
+                numerosPaginas.appendChild(btn);
+            }
+            
+            // Actualizar botones
+            prevBtn.disabled = paginaActual === 1;
+            nextBtn.disabled = paginaActual === totalPaginas || totalPaginas === 0;
+            
+            // Actualizar info
+            const inicioLibro = (paginaActual - 1) * librosPorPagina + 1;
+            const finLibro = Math.min(paginaActual * librosPorPagina, librosFiltrados.length);
+            
+            document.getElementById("pagina-actual").textContent = paginaActual;
+            document.getElementById("total-paginas").textContent = totalPaginas;
+            document.getElementById("libros-mostrados").textContent = `${inicioLibro}-${finLibro}`;
+            document.getElementById("total-libros-contador").textContent = librosFiltrados.length;
+            document.getElementById("total-libros").textContent = librosFiltrados.length;
+        }
+        
+        function cambiarPagina(pagina) {
+            if (pagina < 1 || pagina > totalPaginas) return;
+            mostrarPagina(pagina);
+        }
+        
+        // ==================== FUNCIONES DE FILTRADO ====================
+        function filtrar() {
+            const texto = document.getElementById("buscador").value.toLowerCase();
+            const categoria = document.getElementById("categoria").value;
+            
+            librosFiltrados = todosLibros.filter(libro => {
+                const titulo = libro.getAttribute("data-titulo");
+                const autor = libro.getAttribute("data-autor");
+                const cat = libro.getAttribute("data-categoria");
+                
+                const coincideTexto = titulo.includes(texto) || autor.includes(texto);
+                const coincideCategoria = !categoria || cat === categoria;
+                
+                return coincideTexto && coincideCategoria;
+            });
+            
+            // Mostrar/ocultar estado vacío
+            const emptyState = document.getElementById("empty-state");
+            if (librosFiltrados.length === 0) {
+                emptyState.style.display = "block";
+            } else {
+                emptyState.style.display = "none";
+            }
+            
+            // Resetear paginación
+            paginaActual = 1;
+            mostrarPagina(1);
+        }
+        
+        function mostrarFavoritos() {
+            showingFavs = true;
+            const favs = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+            const favoritosBtn = document.getElementById("favoritosBtn");
+            const volverBtn = document.getElementById("volverBtn");
+            
+            if (favs.length === 0) {
+                alert("No tienes libros en favoritos.");
+                return;
+            }
+            
+            librosFiltrados = todosLibros.filter(libro => {
+                const titulo = libro.querySelector(".libro-titulo").textContent;
+                return favs.includes(titulo);
+            });
+            
+            favoritosBtn.classList.add("activo");
+            volverBtn.style.display = "flex";
+            
+            paginaActual = 1;
+            mostrarPagina(1);
+            actualizarBotonFavoritos();
+        }
+        
+        function volverACategorias() {
+            showingFavs = false;
+            const favoritosBtn = document.getElementById("favoritosBtn");
+            const volverBtn = document.getElementById("volverBtn");
+            
+            favoritosBtn.classList.remove("activo");
+            volverBtn.style.display = "none";
+            
+            document.getElementById("categoria").value = "";
+            document.getElementById("buscador").value = "";
+            
+            filtrar();
+        }
+        
+        // ==================== FUNCIONES DE WHATSAPP ====================
+        function consultarWhatsApp(titulo, precio) {
+            const mensaje = `Hola! Estoy interesado/a en "${titulo}", precio $${precio} MXN`;
+            const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, "_blank");
+        }
+        
+        function preguntarFavoritos() {
+            const favs = JSON.parse(localStorage.getItem("favoritosTertulia") || "[]");
+            if (favs.length === 0) {
+                alert("No tienes libros en favoritos.");
+                return;
+            }
+            
+            const mensaje = `Hola! Me interesa información sobre estos libros:\n\n${favs.join("\n")}`;
+            const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, "_blank");
+        }
+        
+        // ==================== UTILIDADES ====================
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
